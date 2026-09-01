@@ -28,7 +28,7 @@ export const DEFAULT_FIVE_CS = {
   confidence: 5,
 } as const;
 
-const PUBLIC_BASE = import.meta.env.BASE_URL || "/";
+const PUBLIC_BASE = import.meta.env?.BASE_URL || "/";
 const publicAsset = (path: string): string => `${PUBLIC_BASE}${path.replace(/^\/+/, "")}`;
 
 export const BRAND = {
