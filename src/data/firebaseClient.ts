@@ -38,10 +38,13 @@ export function getFirebaseServices(): Promise<FirebaseServices> {
     let db: Firestore;
     try {
       db = initializeFirestore(app, {
+        ignoreUndefinedProperties: true,
         localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() }),
       });
     } catch {
-      db = getFirestore(app);
+      db = initializeFirestore(app, {
+        ignoreUndefinedProperties: true,
+      });
     }
     const auth = getAuth(app);
     await setPersistence(auth, browserLocalPersistence);
