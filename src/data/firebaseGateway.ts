@@ -248,17 +248,74 @@ export class FirebaseGateway implements AppGateway {
     const practiceDocs = (await getDocs(practiceQuery)).docs.map((item) => raw<PracticeSession>(item));
     const currentSession = practiceDocs.find((item) => item.dateKey === dateKey()) ?? practiceDocs[0];
 
-    const shared = await Promise.all([
-      readCollection<ExampleBucket>("teams", session.teamId, "exampleBuckets"),
-      readCollection<CurriculumLesson>("teams", session.teamId, "curriculum"),
-      readCollection<TeamWin>("teams", session.teamId, "teamWins"),
-      readCollection<TeamChallenge>("teams", session.teamId, "teamChallenges"),
-      readCollection<TechniqueTerm>("teams", session.teamId, "techniqueTerms"),
-      currentSession ? readCollection<BoardEntry>("teams", session.teamId, "practiceSessions", currentSession.id, "boardEntries") : Promise.resolve([]),
-    ]);
-    const [exampleBuckets, curriculum, teamWins, challenges, terms, boardEntries] = shared;
-
     const isAthlete = session.membership.role === "athlete";
+
+    const shared = await Promise.all([
+      isAthlete
+        ? getDocs(
+            query(
+              collection(db, "teams", session.teamId, "exampleBuckets"),
+              where("active", "==", true),
+            ),
+          ).then((snapshot) => list<ExampleBucket>(snapshot.docs))
+        : readCollection<ExampleBucket>("teams", session.teamId, "exampleBuckets"),
+
+      isAthlete
+        ? getDocs(
+            query(
+              collection(db, "teams", session.teamId, "curriculum"),
+              where("status", "==", "published"),
+            ),
+          ).then((snapshot) => list<CurriculumLesson>(snapshot.docs))
+        : readCollection<CurriculumLesson>("teams", session.teamId, "curriculum"),
+
+      isAthlete
+        ? getDocs(
+            query(
+              collection(db, "teams", session.teamId, "teamWins"),
+              where("status", "==", "published"),
+            ),
+          ).then((snapshot) => list<TeamWin>(snapshot.docs))
+        : readCollection<TeamWin>("teams", session.teamId, "teamWins"),
+
+      readCollection<TeamChallenge>(
+        "teams",
+        session.teamId,
+        "teamChallenges",
+      ),
+
+      isAthlete
+        ? getDocs(
+            query(
+              collection(db, "teams", session.teamId, "techniqueTerms"),
+              where("active", "==", true),
+            ),
+          ).then((snapshot) => list<TechniqueTerm>(snapshot.docs))
+        : readCollection<TechniqueTerm>(
+            "teams",
+            session.teamId,
+            "techniqueTerms",
+          ),
+
+      currentSession
+        ? readCollection<BoardEntry>(
+            "teams",
+            session.teamId,
+            "practiceSessions",
+            currentSession.id,
+            "boardEntries",
+          )
+        : Promise.resolve([]),
+    ]);
+
+    const [
+      exampleBuckets,
+      curriculum,
+      teamWins,
+      challenges,
+      terms,
+      boardEntries,
+    ] = shared;
     let currentCheckin: PrivatePracticeCheckin | undefined;
     let checkins: PrivatePracticeCheckin[] = [];
     let lessonProgress: LessonProgress[] = [];
