@@ -1,0 +1,7 @@
+{
+  "projects": {
+    "default": "merrill-girls-wrestling",
+    "production": "merrill-girls-wrestling",
+    "demo": "demo-merrill-girls-wrestling"
+  }
+}
