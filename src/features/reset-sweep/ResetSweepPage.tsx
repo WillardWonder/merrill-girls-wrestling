@@ -13,7 +13,7 @@ export function ResetSweepPage() {
   const returnTo = (location.state as { returnTo?: string } | null)?.returnTo ?? ROUTES.today;
   const [duration, setDuration] = useState<20 | 30 | 45>(30);
   const [running, setRunning] = useState(false);
-  const [remaining, setRemaining] = useState(duration);
+  const [remaining, setRemaining] = useState<number>(duration);
   const [complete, setComplete] = useState(false);
   const [nonVisual, setNonVisual] = useState(reducedMotion);
   const timer = useRef<number | null>(null);

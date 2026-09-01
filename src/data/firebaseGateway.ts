@@ -83,11 +83,13 @@ async function claimInvite(user: User): Promise<Membership | null> {
   if (!inviteSnap.exists()) return null;
   const invite = inviteSnap.data() as { email?: string; role?: Role; displayName?: string; boardDisplayName?: string; active?: boolean; seasonId?: string };
   if (invite.email?.toLowerCase() !== user.email.toLowerCase() || invite.active === false) return null;
+  const fallbackDisplayName = user.email.split("@")[0] || "Athlete";
+  const resolvedDisplayName = invite.displayName || user.displayName || fallbackDisplayName;
   const membership: Membership = {
     uid: user.uid,
     role: invite.role ?? "athlete",
-    displayName: invite.displayName || user.displayName || user.email.split("@")[0],
-    boardDisplayName: invite.boardDisplayName || (invite.displayName || user.displayName || "Athlete").split(" ")[0],
+    displayName: resolvedDisplayName,
+    boardDisplayName: invite.boardDisplayName || resolvedDisplayName.split(" ")[0] || "Athlete",
     active: true,
     seasonId: invite.seasonId ?? DEFAULT_SEASON_ID,
     email: user.email,
@@ -141,9 +143,9 @@ async function resolveSession(user: User): Promise<AuthSession> {
   };
 }
 
-async function readCollection<T>(...segments: string[]): Promise<T[]> {
+async function readCollection<T>(path: string, ...segments: string[]): Promise<T[]> {
   const { db } = await getFirebaseServices();
-  const snapshot = await getDocs(collection(db, ...segments));
+  const snapshot = await getDocs(collection(db, path, ...segments));
   return list<T>(snapshot.docs);
 }
 
@@ -164,7 +166,7 @@ export class FirebaseGateway implements AppGateway {
 
   subscribeAuth(listener: (session: AuthSession | null) => void): () => void {
     let active = true;
-    let unsubscribe = () => undefined;
+    let unsubscribe: () => void = () => {};
     void getFirebaseServices().then(({ auth }) => {
       void getRedirectResult(auth).catch(() => undefined);
       unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -322,7 +324,7 @@ export class FirebaseGateway implements AppGateway {
   }
 
   subscribeCurrentPractice(session: AuthSession, listener: (practice?: PracticeSession) => void): () => void {
-    let unsubscribe = () => undefined;
+    let unsubscribe: () => void = () => {};
     void getFirebaseServices().then(({ db }) => {
       const q = query(
         collection(db, "teams", session.teamId, "practiceSessions"),
@@ -339,7 +341,7 @@ export class FirebaseGateway implements AppGateway {
   }
 
   subscribeBoardEntries(teamId: string, practiceSessionId: string, listener: (entries: BoardEntry[]) => void): () => void {
-    let unsubscribe = () => undefined;
+    let unsubscribe: () => void = () => {};
     void getFirebaseServices().then(({ db }) => {
       const q = query(collection(db, "teams", teamId, "practiceSessions", practiceSessionId, "boardEntries"), orderBy("boardDisplayName"));
       unsubscribe = onSnapshot(q, (snapshot) => listener(snapshot.docs.map((item) => raw<BoardEntry>(item))));
@@ -393,15 +395,16 @@ export class FirebaseGateway implements AppGateway {
     let evidence: ConfidenceEvidence | undefined;
     const batch = writeBatch(db);
     if (saveEvidence && usefulText) {
-      evidence = {
+      const createdEvidence: ConfidenceEvidence = {
         id: createId("evidence"), athleteUid: session.uid, text: usefulText, source: "practice",
         sourceRef: { kind: "practice", id: checkin.sessionId }, contextLabel: "Practice", occurredAt: current,
         tags: [...new Set([...(evidenceTags ?? []), "practice", data.workedOnFocus === "yes" ? "follow-through" : "learning"])],
         pillar: checkin.before.pillar, visibility: "private", pinned: false, archived: false,
         createdAt: current, updatedAt: current, createdBy: session.uid, updatedBy: session.uid,
       };
-      updated.evidenceId = evidence.id;
-      batch.set(doc(db, "teams", session.teamId, "athletes", session.uid, "confidenceEvidence", evidence.id), evidence);
+      evidence = createdEvidence;
+      updated.evidenceId = createdEvidence.id;
+      batch.set(doc(db, "teams", session.teamId, "athletes", session.uid, "confidenceEvidence", createdEvidence.id), createdEvidence);
     }
     batch.set(privateRef, updated);
     batch.update(doc(db, "teams", session.teamId, "practiceSessions", checkin.sessionId, "boardEntries", session.uid), { reflectionComplete: true, updatedAt: current });

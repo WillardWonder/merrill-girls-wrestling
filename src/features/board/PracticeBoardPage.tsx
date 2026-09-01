@@ -10,11 +10,11 @@ interface WakeLockSentinelLike { release(): Promise<void>; }
 export function PracticeBoardPage() {
   const { teamId, sessionId } = useParams();
   const { bundle, gateway, online } = useApp();
-  const [entries, setEntries] = useState<BoardEntry[]>(bundle?.currentSession?.id === sessionId ? bundle.boardEntries : []);
+  const [entries, setEntries] = useState<BoardEntry[]>(bundle && bundle.currentSession?.id === sessionId ? bundle.boardEntries : []);
   const [now, setNow] = useState(new Date());
   const [fullscreen, setFullscreen] = useState(Boolean(document.fullscreenElement));
   const wakeLock = useRef<WakeLockSentinelLike | null>(null);
-  const practice = bundle?.currentSession?.id === sessionId ? bundle.currentSession : bundle?.currentSession;
+  const practice = bundle && bundle.currentSession?.id === sessionId ? bundle.currentSession : bundle?.currentSession;
 
   useEffect(() => {
     if (!teamId || !sessionId) return;

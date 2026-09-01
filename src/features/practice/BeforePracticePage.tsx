@@ -17,7 +17,7 @@ export function BeforePracticePage() {
   const { sessionId } = useParams();
   const navigate = useNavigate();
   const { busy, localError, run } = useBusyAction();
-  const practice = bundle?.currentSession?.id === sessionId ? bundle.currentSession : bundle?.currentSession;
+  const practice = bundle && bundle.currentSession?.id === sessionId ? bundle.currentSession : bundle?.currentSession;
   const bucket = (key: string) => bundle?.exampleBuckets.find((item) => item.key === key);
   const [focus, setFocus] = useState(bundle?.currentCheckin?.before.focusText ?? "");
   const [focusSource, setFocusSource] = useState<"example" | "own">(bundle?.currentCheckin?.before.focusSource === "own" ? "own" : "example");

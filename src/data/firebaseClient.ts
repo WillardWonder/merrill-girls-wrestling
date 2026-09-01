@@ -60,5 +60,5 @@ export function getFirebaseServices(): Promise<FirebaseServices> {
     }
     return { app, auth, db, appCheck };
   })();
-  return servicesPromise;
+  return servicesPromise!;
 }

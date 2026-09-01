@@ -174,7 +174,7 @@ export interface CurriculumLesson extends AuditFields {
   tryItNow: TryItActivity;
   useItToday: string;
   reflectPrompt: string;
-  saveTarget?: "cue" | "routine" | "evidence" | "goal" | "if_then" | "none";
+  saveTarget?: "cue" | "routine" | "evidence" | "goal" | "if_then" | "imagery" | "none";
   status: ContentStatus;
 }
 
@@ -184,7 +184,7 @@ export interface LessonProgress extends AuditFields {
   lessonId: string;
   status: "started" | "applied" | "completed";
   outputText?: string;
-  outputType?: "cue" | "routine" | "evidence" | "goal" | "if_then" | "none";
+  outputType?: "cue" | "routine" | "imagery" | "evidence" | "goal" | "if_then" | "none";
   appliedToSessionId?: string;
   completedAt?: string;
 }

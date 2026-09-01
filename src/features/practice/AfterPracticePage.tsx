@@ -18,7 +18,7 @@ export function AfterPracticePage() {
   const { sessionId } = useParams();
   const navigate = useNavigate();
   const { busy, localError, run } = useBusyAction();
-  const checkin = bundle?.currentCheckin?.sessionId === sessionId ? bundle.currentCheckin : bundle?.currentCheckin;
+  const checkin = bundle && bundle.currentCheckin?.sessionId === sessionId ? bundle.currentCheckin : bundle?.currentCheckin;
   const bucket = (key: string) => bundle?.exampleBuckets.find((item) => item.key === key);
   const [worked, setWorked] = useState<WorkedOnFocus>(checkin?.after?.workedOnFocus ?? "yes");
   const [wentWell, setWentWell] = useState(checkin?.after?.wentWell ?? "");
