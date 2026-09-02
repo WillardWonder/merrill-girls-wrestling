@@ -263,5 +263,55 @@ service cloud.firestore {
         allow update, delete: if false;
       }
     }
+
+    // FILM ROOM SECURITY
+    function filmRoomMember(teamId) {
+      return request.auth != null
+        && exists(/databases/$(database)/documents/teams/$(teamId)/members/$(request.auth.uid))
+        && get(/databases/$(database)/documents/teams/$(teamId)/members/$(request.auth.uid)).data.active == true;
+    }
+
+    function filmRoomCoach(teamId) {
+      return filmRoomMember(teamId)
+        && get(/databases/$(database)/documents/teams/$(teamId)/members/$(request.auth.uid)).data.role in ["coach", "admin"];
+    }
+
+    match /teams/{teamId}/videos/{videoId} {
+      allow read: if filmRoomMember(teamId)
+        && (resource.data.status == "published" || filmRoomCoach(teamId));
+
+      allow create, update, delete: if filmRoomCoach(teamId);
+
+      match /comments/{commentId} {
+        allow read: if filmRoomMember(teamId);
+
+        allow create: if filmRoomMember(teamId)
+          && request.resource.data.authorUid == request.auth.uid
+          && request.resource.data.text is string
+          && request.resource.data.text.size() > 0
+          && request.resource.data.text.size() <= 500;
+
+        allow update: if false;
+
+        allow delete: if filmRoomMember(teamId)
+          && (
+            resource.data.authorUid == request.auth.uid
+            || filmRoomCoach(teamId)
+          );
+      }
+
+      match /reactions/{uid} {
+        allow read: if filmRoomMember(teamId);
+
+        allow create, update, delete: if filmRoomMember(teamId)
+          && uid == request.auth.uid;
+      }
+    }
+
+    match /users/{uid}/savedVideos/{videoId} {
+      allow read, create, update, delete: if request.auth != null
+        && uid == request.auth.uid;
+    }
+
   }
 }
