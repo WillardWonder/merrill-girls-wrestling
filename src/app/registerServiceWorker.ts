@@ -3,7 +3,7 @@ export function registerServiceWorker(): void {
   window.addEventListener("load", () => {
     const base = import.meta.env.BASE_URL || "/";
     const workerUrl = `${base}sw.js`;
-    void navigator.serviceWorker.register(workerUrl, { scope: base }).catch((error) => {
+    void navigator.serviceWorker.register(workerUrl, { scope: base, updateViaCache: "none" }).catch((error) => {
       console.warn("Service worker registration failed", error);
     });
   });

@@ -1,4 +1,4 @@
-const CACHE = "merrill-wrestling-shell-v2";
+const CACHE = "merrill-wrestling-shell-film-room-202609020717";
 const scopeRoot = new URL("./", self.registration.scope);
 const asset = (path) => new URL(path, scopeRoot).toString();
 const HOME = asset("./");

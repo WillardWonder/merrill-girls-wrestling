@@ -38,31 +38,53 @@ const CATEGORIES = [
   "Performance",
 ];
 
+function isDevelopmentHash(hash: string): boolean {
+  const path = hash.split("?")[0] ?? hash;
+  return /^#\/app\/develop(?:ment)?(?:\/|$)/i.test(path);
+}
+
+function rememberDevelopmentReturn() {
+  if (isDevelopmentHash(window.location.hash)) {
+    const path = window.location.hash.split("?")[0] ?? window.location.hash;
+    window.sessionStorage.setItem("merrill-film-room-return", path);
+  }
+}
+
 function readFilmLocation(): FilmLocation {
   const hash = window.location.hash;
-  if (!hash.startsWith("#/app/develop")) return { open: false };
+
+  if (!hash.startsWith("#/film-room")) {
+    return { open: false };
+  }
 
   const queryIndex = hash.indexOf("?");
-  if (queryIndex < 0) return { open: false };
+  if (queryIndex < 0) {
+    return { open: true };
+  }
 
   const params = new URLSearchParams(hash.slice(queryIndex + 1));
-  const film = params.get("film");
-  const filmRoom = params.get("filmRoom");
+  const videoId = params.get("video");
 
   return {
-    open: filmRoom === "1" || Boolean(film),
-    videoId: film ?? undefined,
+    open: true,
+    videoId: videoId ?? undefined,
   };
 }
 
 function openFilmRoom(videoId?: string) {
+  rememberDevelopmentReturn();
+
   window.location.hash = videoId
-    ? `#/app/develop?film=${encodeURIComponent(videoId)}`
-    : "#/app/develop?filmRoom=1";
+    ? `#/film-room?video=${encodeURIComponent(videoId)}`
+    : "#/film-room";
 }
 
 function closeFilmRoom() {
-  window.location.hash = "#/app/develop";
+  const returnHash =
+    window.sessionStorage.getItem("merrill-film-room-return") ??
+    "#/app/development";
+
+  window.location.hash = returnHash;
 }
 
 function useFilmLocation() {
@@ -174,7 +196,7 @@ function FilmActions({
   }
 
   async function share() {
-    const deepLink = `${window.location.origin}${window.location.pathname}#/app/develop?film=${encodeURIComponent(video.id)}`;
+    const deepLink = `${window.location.origin}${window.location.pathname}#/film-room?video=${encodeURIComponent(video.id)}`;
     const data = {
       title: video.title,
       text: `Film Room: ${video.title}`,
@@ -746,7 +768,7 @@ export function FilmRoomLayer() {
   useEffect(() => {
     const findTarget = () => {
       const hash = window.location.hash;
-      if (!hash.startsWith("#/app/develop") || location.open) {
+      if (!isDevelopmentHash(hash) || location.open) {
         setPortalTarget(null);
         return;
       }
@@ -793,8 +815,7 @@ export function FilmRoomLayer() {
 
   if (
     portalTarget &&
-    member &&
-    window.location.hash.startsWith("#/app/develop")
+    isDevelopmentHash(window.location.hash)
   ) {
     return createPortal(<FilmRoomEntryCard />, portalTarget);
   }
