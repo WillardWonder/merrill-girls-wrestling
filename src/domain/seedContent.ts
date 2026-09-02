@@ -258,7 +258,7 @@ export const seedCurriculum: CurriculumLesson[] = [
     title: "Talk toward action",
     skillKey: "self_talk",
     whyItMatters: "Choose words that direct your attention toward a useful response.",
-    examples: ["Instead of 'do not mess up,' use 'good stance'", "Instead of 'I cannot,' use 'one job'", "Instead of replaying the score, use 'next exchange'"],
+    examples: ["Good stance", "One job", "Next exchange"],
     tryItNow: { kind: "reflection", title: "Rewrite one thought", instructions: ["Write one thought that pulls you away.", "Replace it with a short action cue."] },
     useItToday: "Notice the old story, then use the cue without arguing with yourself.",
     reflectPrompt: "What cue was more useful than the story in your head?",
