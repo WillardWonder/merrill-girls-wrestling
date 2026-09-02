@@ -51,6 +51,7 @@ export function App() {
               <Route path={ROUTES.compete} element={<CompetitionPage />} />
               <Route path={ROUTES.confidence} element={<ConfidenceBankPage />} />
               <Route path={ROUTES.develop} element={<DevelopmentPage />} />
+              <Route path="/film-room" element={<div aria-hidden="true" />} />
               <Route path={ROUTES.team} element={<TeamPage />} />
             </Route>
             <Route element={<RequireCoach />}>

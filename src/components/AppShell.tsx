@@ -7,6 +7,7 @@ import { Icon, type IconName } from "./Icon";
 const athleteNav: Array<{ to: string; label: string; icon: IconName }> = [
   { to: ROUTES.today, label: "Today", icon: "home" },
   { to: ROUTES.develop, label: "Develop", icon: "spark" },
+  { to: "/film-room", label: "Film", icon: "spark" },
   { to: ROUTES.compete, label: "Compete", icon: "trophy" },
   { to: ROUTES.team, label: "Team", icon: "team" },
 ];
