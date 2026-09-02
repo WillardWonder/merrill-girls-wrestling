@@ -56,6 +56,7 @@ export const ROUTES = {
   curriculum: "/app/you-university",
   lesson: (lessonId: string) => `/app/you-university/${lessonId}`,
   confidence: "/app/confidence",
+  filmRoom: "/film-room",
   coach: "/coach",
   coachContent: "/coach/content",
   coachAdmin: "/coach/admin",

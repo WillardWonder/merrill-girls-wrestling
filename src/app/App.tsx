@@ -3,7 +3,7 @@ import { BRAND, ROUTES } from "../domain";
 import { useApp } from "./AppContext";
 import { AppShell } from "../components/AppShell";
 import { GlobalFeedback } from "../components/GlobalFeedback";
-import { RequireAdmin, RequireAthlete, RequireAuth, RequireCoach } from "../components/RouteGuards";
+import { RequireAdmin, RequireAthlete, RequireAuth, RequireCoach, RequireTeamMember } from "../components/RouteGuards";
 import { SignInPage } from "../features/auth/SignInPage";
 import { OnboardingPage } from "../features/onboarding/OnboardingPage";
 import { TodayPage } from "../features/today/TodayPage";
@@ -20,6 +20,7 @@ import { CoachHomePage } from "../features/coach/CoachHomePage";
 import { CoachContentPage } from "../features/coach/CoachContentPage";
 import { AdminPage } from "../features/admin/AdminPage";
 import { PracticeBoardPage } from "../features/board/PracticeBoardPage";
+import { FilmRoomPage } from "../features/film-room/FilmRoomPage";
 
 function StartRoute() {
   const { session } = useApp();
@@ -41,6 +42,9 @@ export function App() {
           <Route path={ROUTES.onboarding} element={<OnboardingPage />} />
           <Route path="/board/:teamId/:sessionId" element={<PracticeBoardPage />} />
           <Route element={<AppShell />}>
+            <Route element={<RequireTeamMember />}>
+              <Route path={ROUTES.filmRoom} element={<FilmRoomPage />} />
+            </Route>
             <Route element={<RequireAthlete />}>
               <Route path={ROUTES.today} element={<TodayPage />} />
               <Route path="/app/practice/before/:sessionId" element={<BeforePracticePage />} />
@@ -51,7 +55,6 @@ export function App() {
               <Route path={ROUTES.compete} element={<CompetitionPage />} />
               <Route path={ROUTES.confidence} element={<ConfidenceBankPage />} />
               <Route path={ROUTES.develop} element={<DevelopmentPage />} />
-              <Route path="/film-room" element={<div aria-hidden="true" />} />
               <Route path={ROUTES.team} element={<TeamPage />} />
             </Route>
             <Route element={<RequireCoach />}>

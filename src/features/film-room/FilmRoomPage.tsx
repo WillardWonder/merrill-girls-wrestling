@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState, type FormEvent } from "react";
-import { createPortal } from "react-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import { ROUTES } from "../../domain";
 import {
   addFilmComment,
   deleteFilmComment,
@@ -38,65 +39,14 @@ const CATEGORIES = [
   "Performance",
 ];
 
-function isDevelopmentHash(hash: string): boolean {
-  const path = hash.split("?")[0] ?? hash;
-  return /^#\/app\/develop(?:ment)?(?:\/|$)/i.test(path);
-}
-
-function rememberDevelopmentReturn() {
-  if (isDevelopmentHash(window.location.hash)) {
-    const path = window.location.hash.split("?")[0] ?? window.location.hash;
-    window.sessionStorage.setItem("merrill-film-room-return", path);
-  }
-}
-
-function readFilmLocation(): FilmLocation {
-  const hash = window.location.hash;
-
-  if (!hash.startsWith("#/film-room")) {
-    return { open: false };
-  }
-
-  const queryIndex = hash.indexOf("?");
-  if (queryIndex < 0) {
-    return { open: true };
-  }
-
-  const params = new URLSearchParams(hash.slice(queryIndex + 1));
-  const videoId = params.get("video");
-
-  return {
-    open: true,
-    videoId: videoId ?? undefined,
-  };
+function readVideoId(search: string): string | undefined {
+  return new URLSearchParams(search).get("video") ?? undefined;
 }
 
 function openFilmRoom(videoId?: string) {
-  rememberDevelopmentReturn();
-
   window.location.hash = videoId
-    ? `#/film-room?video=${encodeURIComponent(videoId)}`
-    : "#/film-room";
-}
-
-function closeFilmRoom() {
-  const returnHash =
-    window.sessionStorage.getItem("merrill-film-room-return") ??
-    "#/app/development";
-
-  window.location.hash = returnHash;
-}
-
-function useFilmLocation() {
-  const [location, setLocation] = useState<FilmLocation>(() => readFilmLocation());
-
-  useEffect(() => {
-    const update = () => setLocation(readFilmLocation());
-    window.addEventListener("hashchange", update);
-    return () => window.removeEventListener("hashchange", update);
-  }, []);
-
-  return location;
+    ? `#${ROUTES.filmRoom}?video=${encodeURIComponent(videoId)}`
+    : `#${ROUTES.filmRoom}`;
 }
 
 function FilmEmbed({ video }: { video: FilmVideo }) {
@@ -640,9 +590,13 @@ function FilmDiscussion({
 function FilmRoom({
   member,
   location,
+  onClose,
+  closeLabel,
 }: {
   member: FilmMember;
   location: FilmLocation;
+  onClose: () => void;
+  closeLabel: string;
 }) {
   const [videos, setVideos] = useState<FilmVideo[]>([]);
   const [savedIds, setSavedIds] = useState<Set<string>>(new Set());
@@ -680,8 +634,8 @@ function FilmRoom({
   return (
     <>
       <header className="film-hero">
-        <button type="button" className="film-close" onClick={closeFilmRoom}>
-          Back to Develop
+        <button type="button" className="film-close" onClick={onClose}>
+          {closeLabel}
         </button>
         <span className="film-eyebrow">MERRILL FILM ROOM</span>
         <h1>Watch with a job.</h1>
@@ -729,96 +683,71 @@ function FilmRoom({
   );
 }
 
-function FilmRoomEntryCard() {
-  return (
-    <section className="film-entry-card">
-      <div>
-        <span className="film-eyebrow">FILM ROOM</span>
-        <h2>See it. Notice it. Try it.</h2>
-        <p>
-          Coach-picked technique, match film, and performance clips with one
-          clear thing to watch for.
-        </p>
-      </div>
-      <button
-        type="button"
-        className="film-primary-button"
-        onClick={() => openFilmRoom()}
-      >
-        Open Film Room
-      </button>
-    </section>
-  );
-}
-
-export function FilmRoomLayer() {
-  const location = useFilmLocation();
+export function FilmRoomPage() {
+  const location = useLocation();
+  const navigate = useNavigate();
   const [member, setMember] = useState<FilmMember | null>(null);
   const [message, setMessage] = useState("");
-  const [portalTarget, setPortalTarget] = useState<Element | null>(null);
 
   useEffect(() => {
+    let active = true;
+
     void loadFilmMember()
-      .then(setMember)
-      .catch(() =>
-        setMessage("Film Room will be ready after team access loads."),
-      );
-  }, []);
-
-  useEffect(() => {
-    const findTarget = () => {
-      const hash = window.location.hash;
-      if (!isDevelopmentHash(hash) || location.open) {
-        setPortalTarget(null);
-        return;
-      }
-
-      const target =
-        document.querySelector("main") ??
-        document.querySelector(".app-main") ??
-        document.querySelector("[role='main']");
-
-      setPortalTarget(target);
-    };
-
-    const frame = window.requestAnimationFrame(findTarget);
-    const observer = new MutationObserver(findTarget);
-    observer.observe(document.body, { childList: true, subtree: true });
+      .then((loaded) => {
+        if (active) setMember(loaded);
+      })
+      .catch((error) => {
+        if (!active) return;
+        setMessage(
+          error instanceof Error
+            ? error.message
+            : "Film Room is reconnecting.",
+        );
+      });
 
     return () => {
-      window.cancelAnimationFrame(frame);
-      observer.disconnect();
+      active = false;
     };
-  }, [location.open]);
+  }, []);
 
-  if (location.open) {
+  const filmLocation: FilmLocation = {
+    open: true,
+    videoId: readVideoId(location.search),
+  };
+
+  if (!member) {
     return (
-      <div
-        className="film-overlay"
-        role="dialog"
-        aria-modal="true"
-        aria-label="Film Room"
-      >
-        <main className="film-room-shell">
-          {member ? (
-            <FilmRoom member={member} location={location} />
-          ) : (
-            <div className="film-loading">
-              <strong>Opening Film Room</strong>
-              <span>{message || "Loading team film..."}</span>
-            </div>
-          )}
-        </main>
+      <div className="page film-room-page">
+        <div className="film-room-shell">
+          <div className="film-loading">
+            <strong>Opening Film Room</strong>
+            <span>{message || "Loading team film..."}</span>
+          </div>
+        </div>
       </div>
     );
   }
 
-  if (
-    portalTarget &&
-    isDevelopmentHash(window.location.hash)
-  ) {
-    return createPortal(<FilmRoomEntryCard />, portalTarget);
-  }
+  const returnTo =
+    member.role === "athlete"
+      ? ROUTES.develop
+      : ROUTES.coach;
 
-  return null;
+  const closeLabel =
+    member.role === "athlete"
+      ? "Back to Develop"
+      : "Back to Coach";
+
+  return (
+    <div className="page film-room-page">
+      <div className="film-room-shell">
+        <FilmRoom
+          member={member}
+          location={filmLocation}
+          onClose={() => navigate(returnTo)}
+          closeLabel={closeLabel}
+        />
+      </div>
+    </div>
+  );
 }

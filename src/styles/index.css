@@ -603,3 +603,10 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
   *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; }
   .sweep-track.is-moving .sweep-dot, .breath-orb.is-breathing { animation: none !important; }
 }
+
+
+/* Film Room adds a fifth first-class destination for both athlete and coach shells. */
+.bottom-nav,
+.coach-bottom-nav {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}

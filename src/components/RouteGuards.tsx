@@ -22,6 +22,15 @@ export function RequireAthlete() {
   return <Outlet />;
 }
 
+export function RequireTeamMember() {
+  const { session } = useApp();
+  if (!session) return null;
+  if (!["athlete", "coach", "admin"].includes(session.membership.role)) {
+    return <Navigate to="/" replace />;
+  }
+  return <Outlet />;
+}
+
 export function RequireCoach() {
   const { session } = useApp();
   if (!session) return null;

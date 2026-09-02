@@ -7,7 +7,7 @@ import { Icon, type IconName } from "./Icon";
 const athleteNav: Array<{ to: string; label: string; icon: IconName }> = [
   { to: ROUTES.today, label: "Today", icon: "home" },
   { to: ROUTES.develop, label: "Develop", icon: "spark" },
-  { to: "/film-room", label: "Film", icon: "spark" },
+  { to: ROUTES.filmRoom, label: "Film", icon: "play" },
   { to: ROUTES.compete, label: "Compete", icon: "trophy" },
   { to: ROUTES.team, label: "Team", icon: "team" },
 ];
@@ -43,6 +43,7 @@ export function AppShell() {
         <nav className="coach-bottom-nav" aria-label="Coach navigation">
           <NavLink to={ROUTES.coach} end><Icon name="coach"/><span>Coach</span></NavLink>
           <NavLink to={ROUTES.coachContent}><Icon name="book"/><span>Content</span></NavLink>
+          <NavLink to={ROUTES.filmRoom}><Icon name="play"/><span>Film</span></NavLink>
           <NavLink to={ROUTES.coachAdmin}><Icon name="settings"/><span>Admin</span></NavLink>
           <button type="button" onClick={() => void signOut()}><Icon name="logout"/><span>Sign out</span></button>
         </nav>

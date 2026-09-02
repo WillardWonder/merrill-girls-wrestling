@@ -487,3 +487,14 @@
     animation: none !important;
   }
 }
+
+
+/* Native app integration: Film Room now lives inside AppShell. */
+.film-room-page {
+  width: 100%;
+}
+
+.film-room-page .film-room-shell {
+  width: 100%;
+  min-height: 0;
+}
