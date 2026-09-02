@@ -9,7 +9,7 @@
   "scripts": {
     "dev": "vite",
     "dev:firebase": "vite --mode firebase",
-    "build": "tsc -p tsconfig.app.json && vite build",
+    "build": "npm run language:check && tsc -p tsconfig.app.json && vite build",
     "preview": "vite preview --host 0.0.0.0",
     "typecheck": "tsc -p tsconfig.app.json --pretty false",
     "lint": "eslint . --max-warnings=0",
@@ -28,7 +28,8 @@
     "deactivate": "tsx scripts/deactivate-user.ts",
     "export:season": "tsx scripts/export-season.ts",
     "deploy:hosting": "npm run build && firebase deploy --only hosting",
-    "deploy:firebase": "npm run build && firebase deploy --only firestore:rules,firestore:indexes,hosting"
+    "deploy:firebase": "npm run build && firebase deploy --only firestore:rules,firestore:indexes,hosting",
+    "language:check": "node scripts/audit-athlete-language.mjs"
   },
   "dependencies": {
     "firebase": "12.0.0",

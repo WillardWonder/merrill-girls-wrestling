@@ -31,7 +31,7 @@ export function TodayPage() {
   const upcomingPlan = bundle.competitionPlans.filter((plan) => plan.status === "active").sort((a, b) => a.eventDate.localeCompare(b.eventDate))[0];
 
   const primary = !practice
-    ? { label: "No practice is open", text: "You do not need to manufacture a task today.", action: null }
+    ? { label: "Recovery day.", text: "Recovery day. Recharge for what's next.", action: null }
     : !beforeDone
       ? { label: "Set today's 1%", text: "Choose one clear job before you enter practice.", action: () => navigate(ROUTES.beforePractice(practice.id)) }
       : !afterDone

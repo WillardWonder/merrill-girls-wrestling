@@ -215,9 +215,9 @@ export const seedCurriculum: CurriculumLesson[] = [
     week: 3,
     title: "Know your Five Cs",
     skillKey: "five_cs",
-    whyItMatters: "The Five Cs help you notice your current state. They are not a grade and they do not define you. The useful question is what changed and what helped.",
+    whyItMatters: "The Five Cs help you notice where you are right now. Use them to spot what is working and choose one thing to support today.",
     examples: ["Commitment to the work", "Courage to engage", "Concentration on the job", "Control of your response", "Confidence from evidence"],
-    tryItNow: { kind: "reflection", title: "Notice, do not judge", instructions: ["Rate each C honestly.", "Pick one C you can support with a behavior today."] },
+    tryItNow: { kind: "reflection", title: "Notice what changed", instructions: ["Rate each C honestly.", "Pick one C you can support with a behavior today."] },
     useItToday: "Use the rating to choose a helpful action, not to criticize yourself.",
     reflectPrompt: "Which C changed most, and what happened in practice?",
     saveTarget: "none",
@@ -257,7 +257,7 @@ export const seedCurriculum: CurriculumLesson[] = [
     week: 6,
     title: "Talk toward action",
     skillKey: "self_talk",
-    whyItMatters: "You do not have to eliminate every unhelpful thought. You need language that directs attention toward a useful response.",
+    whyItMatters: "Choose words that direct your attention toward a useful response.",
     examples: ["Instead of 'do not mess up,' use 'good stance'", "Instead of 'I cannot,' use 'one job'", "Instead of replaying the score, use 'next exchange'"],
     tryItNow: { kind: "reflection", title: "Rewrite one thought", instructions: ["Write one thought that pulls you away.", "Replace it with a short action cue."] },
     useItToday: "Notice the old story, then use the cue without arguing with yourself.",
@@ -430,7 +430,7 @@ const technique = (
 });
 
 export const seedTechniqueTerms: TechniqueTerm[] = [
-  technique("persistent", "Persistent", "identity", "verified_arnie_primary", "Coach Arnie packet", { definition: "Keep working after failure, breakdown, or slow progress.", coachCue: "Persistent" }),
+  technique("persistent", "Persistent", "identity", "verified_arnie_primary", "Coach Arnie packet", { definition: "Keep working through tough moments and slow progress.", coachCue: "Persistent" }),
   technique("consistent", "Consistent", "identity", "verified_arnie_primary", "Coach Arnie packet", { definition: "Repeat habits, standards, and details reliably.", coachCue: "Consistent" }),
   technique("resilient", "Resilient", "identity", "verified_arnie_primary", "Coach Arnie packet", { definition: "Recover from setbacks and return to useful action.", coachCue: "Resilient" }),
   technique("relentless", "Relentless", "identity", "verified_arnie_primary", "Coach Arnie packet", { definition: "Keep creating useful action and pressure.", coachCue: "Relentless" }),
@@ -447,7 +447,6 @@ export const seedTechniqueTerms: TechniqueTerm[] = [
   technique("pete-bar", "Pete bar", "unverified", "legacy_verify", "Legacy Merrill reconstruction", { notes: "Meaning must be coach verified." }),
   technique("randy-lewis", "Randy Lewis", "unverified", "legacy_verify", "Legacy Merrill reconstruction", { notes: "Specific Merrill use must be coach verified." }),
   technique("talvi", "Talvi", "unverified", "legacy_verify", "Legacy Merrill reconstruction", { notes: "Specific Merrill use must be coach verified." }),
-  technique("run-pipe", "run pipe", "rejected", "rejected", "Coach Stutting rejection, 2026-08-25", { notes: "Do not display, seed, teach, or regenerate as Merrill terminology." }),
 ];
 
 export interface DemoSeed {

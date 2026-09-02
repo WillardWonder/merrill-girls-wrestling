@@ -59,7 +59,7 @@ export function ResetSweepPage() {
         <div className="reset-stage__copy">
           <div className="eyebrow eyebrow--light">Easy eyes. Easy breath.</div>
           <h1>{complete ? "What is your next job?" : nonVisual ? "Breathe through the four Pillars" : "Follow the dot, then move on."}</h1>
-          <p>{complete ? "Choose one short cue and return to wrestling." : "Stop at any time. This is a brief performance-focus tool, not therapy."}</p>
+          <p>{complete ? "Choose one short cue and return to wrestling." : "Stop at any time. This is a brief performance-focus tool, Use this to reset your focus."}</p>
         </div>
 
         {!nonVisual ? (

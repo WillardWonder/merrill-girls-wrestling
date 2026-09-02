@@ -63,7 +63,7 @@ export function SignInPage() {
               <p className="demo-note">Demo email password: <strong>demo1234</strong></p>
             </div>
           ) : null}
-          <p className="privacy-note">This is a closed team system. Your private reflections never appear on the Practice Board.</p>
+          <p className="privacy-note">This is a closed team system. The Practice Board shows only your name, Today's 1%, and optional Pillar. Your reflections stay private.</p>
         </div>
       </section>
     </main>

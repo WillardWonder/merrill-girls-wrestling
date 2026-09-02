@@ -11,7 +11,7 @@ const ACTION_VERBS = [
   "stay", "use", "win", "work",
 ];
 
-const VAGUE_GOALS = ["be better", "do good", "try hard", "win", "stay positive", "wrestle better"];
+const VAGUE_GOALS = ["be better", "do good", "try hard", "win", "One adjustment. Next exchange.", "wrestle better"];
 
 export function validateFocus(text: string, maxLength = 80): ValidationResult {
   const normalized = text.trim().replace(/\s+/g, " ");

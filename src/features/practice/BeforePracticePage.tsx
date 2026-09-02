@@ -84,7 +84,7 @@ export function BeforePracticePage() {
         </Card>
 
         <details className="details-card" open={showFiveCs} onToggle={(event) => setShowFiveCs((event.currentTarget as HTMLDetailsElement).open)}>
-          <summary><span><strong>Check your Five Cs</strong><small>Optional self-awareness, never a grade</small></span></summary>
+          <summary><span><strong>Check your Five Cs</strong><small>Optional check-in to notice where you are</small></span></summary>
           <FiveCsEditor value={fiveCs} onChange={setFiveCs} />
         </details>
 

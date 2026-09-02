@@ -122,7 +122,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       setSession(next);
       setError(null);
     } catch (caught) {
-      setError(messageForError(caught, "Sign-in failed."));
+      setError(messageForError(caught, "We couldn\'t sign you in. Check your information and try again."));
       throw caught;
     } finally {
       setAuthLoading(false);
@@ -136,7 +136,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       setSession(next);
       setError(null);
     } catch (caught) {
-      setError(messageForError(caught, "Google sign-in failed."));
+      setError(messageForError(caught, "Google sign-in didn\'t finish. Try again."));
       throw caught;
     } finally {
       setAuthLoading(false);
